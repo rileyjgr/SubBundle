@@ -1,6 +1,8 @@
-const { google } = require("googleapis");
+const { google } = require('googleapis');
 const mongoose = require('mongoose');
+const User = require('../models/users');
 const axios = require('axios');
+
 
 require('dotenv').config();
 
@@ -83,39 +85,34 @@ module.exports = {
             }
 
     },
-    upcomingPayments: async(agent)=>{
-        console.log(agent.parameters);
-
-        let userUppcommingTranscations = [
-        ]
-        
-
-        // axios.get('');
-        // need to add functionality to respond back what previous payments the user had
-
-        agent.add('You have 3 Subscriptions coming up on 2/18/19. Hulu, Netflix, and Amazon Prime. Totalling $32.00');
-
-    },
     capitalOneAccount: async(agent)=>{
         console.log(agent.parameters);
 
         const first_name = agent.parameters.name;
         const last_name = 'Mr. Budget';
 
+
         const address = agent.parameters.address;
         const st = 'tx';
         const zip = agent.parameters.zip;
 
         const data = {
-            "first_name": first_name,
-            "last_name": last_name,
-            "address": {
-                "street_number": '0',
-                "street_name": address,
-                "city": "Dallas",
-                "state": st,
-                "zip": zip
+            'first_name': first_name,
+            'last_name': last_name,
+            'address': {
+                'street_number': '0',
+                'street_name': address,
+                'city': 'Dallas',
+                'state': st,
+                'zip': zip
             }
+        }
+
+        // add in passwordhasing for capital one id
+        const user = {
+            'username': first_name,
+            'password': 0000,
+            'capitalOneId': undefined
         }
 
         const capital_one_api_key = process.env.CAPITAL_ONE_API;
@@ -128,14 +125,17 @@ module.exports = {
             console.log(resp.data);
             console.log(resp.data.objectCreated._id)
             const user_id = resp.data.objectCreated._id;
+            user.capitalOneId = user_id;
             agent.add('Your account has been created and your id is: ' + user_id);
             
         }).catch((err)=>{
             agent.add('Something went wrong please try again later.');
         });
 
-        
+        const newUser = new User(user);
+        await newUser.save();
     },
+
     spent: async(agent)=>{
         console.log(agent.parameters);
 
@@ -186,6 +186,72 @@ module.exports = {
                 agent.add('That is not a number. Please give me a number.');
                 break;
         }
+    },
+    upcomingPayments: async(agent)=>{
+        console.log(agent.parameters);
+
+        let userUppcommingTranscations = [
+        ]
+        // axios.get('');
+        // need to add functionality to respond back what previous payments the user had
+
+        agent.add('You have 3 Subscriptions coming up on 2/18/19. Hulu, Netflix, and Amazon Prime. Totalling $32.00');
+
+    },
+    getCapitalOneProduct: async(agent)=>{
+        console.log(agent.parameters);
+        // info for mongodb
+        const {username, password} = agent.parameters;
+        //info for capital one api
+        const nickname = agent.parameters.nickname;
+        const balance = agent.parameters.balance;
+        const data = {
+            "type": "Credit Card",
+            "nickname": nickname,
+            "rewards": 0,
+            "balance": balance
+          }
+ 
+
+        // declare capital one id
+        let capitalOneId = undefined;
+
+        const goForCapitalOne = async(data, capitalOneId)=> {
+            console.log(data, capitalOneId);
+            const capital_one_api_key = process.env.CAPITAL_ONE_API;
+                await axios({
+                method: 'post',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                url: 'http://api.reimaginebanking.com/customers/' + capitalOneId+ '/accounts?key='+capital_one_api_key,
+                data: data
+            }).then((resp)=>{
+                console.log(resp.data);
+                console.log(resp.data.objectCreated._id)
+                const {type, balance, nickname} = resp.data.objectCreated;
+                agent.add('Your ' + type + 'account with a balance of ' + balance + ' was created. Its nickname is ' + nickname);
+            }).catch((err)=>{
+                console.log(err);
+                agent.add('Something went wrong please try again later.');
+            });
+        }
+
+        // find by username and password in our db to obtain id
+        let booleanValue = Boolean;
+        const foundUser = await User.findOne({username: username, password: password})
+        .then((resp)=>{
+            booleanValue = true;
+            capitalOneId = resp.capitalOneId; 
+        }).catch((err)=>{
+            booleanValue=false;
+            console.log(err);
+        });
+
+        if(booleanValue = true) {
+            goForCapitalOne(data, capitalOneId)
+        } else {
+            agent.add('sorry cant help at the moment.');
+        }
+
     }
 };
 

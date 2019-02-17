@@ -18,6 +18,7 @@ exports.dialogflowFirebaseFulFillment = functions.https.onRequest((request, resp
     intentMap.set('spent', bot.spent);
     intentMap.set('salary', bot.salary);
     intentMap.set('upcomingPayments', bot.upcomingPayments);
+    intentMap.set('getCapitalOneProduct', bot.getCapitalOneProduct);
 
     agent.handleRequest(intentMap);
 
