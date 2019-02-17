@@ -96,6 +96,46 @@ module.exports = {
         agent.add('You have 3 Subscriptions coming up on 2/18/19. Hulu, Netflix, and Amazon Prime. Totalling $32.00');
 
     },
+    capitalOneAccount: async(agent)=>{
+        console.log(agent.parameters);
+
+        const first_name = agent.parameters.name;
+        const last_name = 'Mr. Budget';
+
+        const address = agent.parameters.address;
+        const st = 'tx';
+        const zip = agent.parameters.zip;
+
+        const data = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "address": {
+                "street_number": '0',
+                "street_name": address,
+                "city": "Dallas",
+                "state": st,
+                "zip": zip
+            }
+        }
+
+        const capital_one_api_key = process.env.CAPITAL_ONE_API;
+        await axios({
+            method: 'post',
+            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+            url: 'http://api.reimaginebanking.com/customers?key='+capital_one_api_key,
+            data: data
+        }).then((resp)=>{
+            console.log(resp.data);
+            console.log(resp.data.objectCreated._id)
+            const user_id = resp.data.objectCreated._id;
+            agent.add('Your account has been created and your id is: ' + user_id);
+            
+        }).catch((err)=>{
+            agent.add('Something went wrong please try again later.');
+        });
+
+        
+    },
     spent: async(agent)=>{
         console.log(agent.parameters);
 
