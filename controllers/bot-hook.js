@@ -1,4 +1,4 @@
-const {google} = require("googleapis");
+const { google } = require("googleapis");
 const mongoose = require('mongoose');
 const axios = require('axios');
 
@@ -25,6 +25,16 @@ module.exports = {
 
         const query = agent.parameters.categories;
         console.log(query);
+        
+
+        let userName = '';
+        let userBalance = 0;
+        let userAllocatedBalance = 0;
+
+        // get call for user information
+        // axios.get('');
+        
+        // need ot add in functionality to get data from ml and respond back with given amounts
 
         // switch case to handle each category
         switch(query){
@@ -49,14 +59,69 @@ module.exports = {
             }
 
     },
-    payments: async(agent)=>{
+    upcomingPayments: async(agent)=>{
+        console.log(agent.parameters);
+
+        let userUppcommingTranscations = [
+        ]
+        
+
+        // axios.get('');
+        // need to add functionality to respond back what previous payments the user had
+
+        agent.add('You have 3 Subscriptions coming up on 2/18/19. Hulu, Netflix, and Amazon Prime. Totalling $32.00');
 
     },
     spent: async(agent)=>{
+        console.log(agent.parameters);
 
+        let userAllocation = agent.parameters.categories;
+        let userAmmount = 0;
+        let userTotal = 100;
+        switch(userAllocation){
+            case 'food':
+            // userAmmount = 50;
+            agent.add('You spent' + userAmmount + 'dollars on food this month.'+  ' Your total remaining balance for food is: ' + userTotal + ' dollars');
+            break;
+        case 'misc': 
+            agent.add('You spent' + userAmmount + 'dollars on useless stuff this month.'+ ' Your total remaining balance for everything else is: ' + userTotal + ' dollars');
+            break;
+        case 'gas':
+            agent.add('You spent' + userAmmount + 'dollars on gas this month.'+ ' Your total remaining balance for gas is: ' + userTotal + ' dollars');
+            break;
+        case 'total':
+            agent.add('You spent' + userAmmount + 'dollars on all your purchases this month.'+ ' Your total remaining balance is: ' + userTotal + ' dollars');
+            break;
+
+        case 'subscriptions':
+            agent.add('You spent' + userAmmount + ' on subscriptions this month.'+  ' Your total remaining balance for subscriptions is: ' + array.Subscriptions + ' dollars');
+            break;
+
+        case '':
+            agent.add(array.name + '. Please ask about a certain category. Your choices include subscriptions, gas, food, misc, and total balance');
+        }
     },
     salary: async(agent)=>{
+        console.log(agent.parameters);
 
+        let userSalary = agent.parameters.amount;
+        
+        let trueFalse = Boolean;
+
+        if(isNaN(userSalary)){
+            trueFalse = false;
+        } else {
+            trueFalse = true;
+        };
+
+        switch(trueFalse){
+            case true:
+                agent.add('Thank you for updating your salary.');
+                break;
+            case false:
+                agent.add('That is not a number. Please give me a number.');
+                break;
+        }
     }
 };
 
