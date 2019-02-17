@@ -8,6 +8,30 @@ module.exports = {
 
     // check whether user has enough money to buy a certain product
     afford: async(agent)=>{
+        console.log(agent.parameters);
+        const amount = agent.parameters.number;
+        console.log(amount);
+        const item = agent.parameters.item;
+        const userAllocation = agent.parameters.categories;
+
+        const userAllocatedBalance = 100;
+        let userRemainingBalance = userAllocatedBalance - amount;
+
+        let booleanValue = Boolean;
+        
+        if(userRemainingBalance > 0){
+            booleanValue = true;
+        } else {
+            booleanValue = false
+        }
+        switch(booleanValue){
+            case true:
+                agent.add('You can afford your '+ item + '. But please note your total ' + userAllocation + 'balance will be ' + userRemainingBalance + ' dollars.');
+                break;
+            case false:
+                agent.add('You can not afford ' + item +'. Your total remaining balance for ' + userAllocation +' is only ' + userAllocatedBalance+ ' dollars.');
+                break;
+        }
 
     },
 

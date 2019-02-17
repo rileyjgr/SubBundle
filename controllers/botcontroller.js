@@ -12,7 +12,7 @@ exports.dialogflowFirebaseFulFillment = functions.https.onRequest((request, resp
 
     // intent mapping
     
-    intentMap.set('afford', bot.salary);
+    intentMap.set('afford', bot.afford);
     intentMap.set('balance', bot.balance);
     intentMap.set('spent', bot.spent);
     intentMap.set('salary', bot.salary);
