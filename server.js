@@ -21,6 +21,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 
 db.once('open', function(){
     routes.bot(app);
+    routes.html(app);
     app.listen(port);
 });
 

@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fulfillment = require('../controllers/botcontroller.js');
 
-const policyHtml = require('../views/policy.html');
 require('dotenv');
 
 module.exports ={
@@ -18,9 +17,12 @@ module.exports ={
             fulfillment.dialogflowFirebaseFulFillment(request, response);
         });
     },
-    policy: async(app)=>{
-        app.get('/policy', (res)=>{
-            res.send(policyHtml);
+    html: async(app)=>{
+        app.get('/', (req, res)=>{
+            res.sendFile(path.join(`${__dirname}/../views/index.html`));
+        })
+        app.get('/policy', (req, res)=>{
+            res.sendFile(path.join(`${__dirname}/../views/policy.html`));
         });
     }
 
