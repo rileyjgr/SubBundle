@@ -162,7 +162,7 @@ module.exports = {
             break;
 
         case '':
-            agent.add(array.name + '. Please ask about a certain category. Your choices include subscriptions, gas, food, misc, and total balance');
+            agent.add('Please ask about a certain category. Your choices include subscriptions, gas, food, misc, and total balance');
         }
     },
     salary: async(agent)=>{
