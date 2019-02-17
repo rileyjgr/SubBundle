@@ -25,6 +25,7 @@
     "firebase-admin": "^7.0.0",
     "firebase-functions": "^2.2.0",
     "google-apis": "^1.0.0",
+    "mongoose": "^5.4.13",
     "plaid": "^2.10.0"
   }
 }
